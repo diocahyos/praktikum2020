@@ -1,0 +1,94 @@
+---
+title: "Tugas Modul 9"
+author: "Dio Cahyo Saputra"
+date: "4/19/2020"
+output:
+  word_document: default
+  html_document: default
+---
+
+```{r}
+library(tidyverse)
+library(dslabs)
+```
+
+### D. Latihan
+
+##### Reshaping data 
+1. Jalankan perintah berikut untuk membuat objek baru bernama “co2_wide”: 
+
+```{r}
+co2_wide <- data.frame(matrix(co2, ncol = 12, byrow = TRUE)) %>%
+  setNames(1:12) %>%
+  mutate(year = as.character(1959:1997)) 
+co2_wide
+```
+
+Gunakan fungsi gather untuk mentransformasi dataset menjadi data tidy. Tampilkan hasil data tidy yang berhasil dibuat
+
+```{r}
+co2_tidy <- gather(co2_wide,month, co2, `1`:`12`)
+co2_tidy
+```
+
+2. Plot CO2 versus month dengan plot yang berbeda untuk setiap year menggunakan script ini:
+
+```{r}
+co2_tidy %>% ggplot(aes(month, co2, color = year)) + geom_line() 
+```
+
+Jika plot yang diharapkan tidak berhasil dibuat, kemungkinan penyebabnya adalah karena co2_tidy$month tipe datanya bukan numerik: 
+
+
+```{r}
+class(co2_tidy$year)
+```
+
+Modifikasi ulang script gather sehingga plot yang diinginkan berhasil ditampilkan 
+
+```{r}
+co2_tidy <- gather(co2_wide,month, co2, `1`:`12`, convert = TRUE)
+class(co2_tidy$month)
+co2_tidy %>% ggplot(aes(month, co2, color = year)) + geom_line()
+```
+
+#### Joining Table 
+Instal dan muat library Lahman. Package yang telah kita muat berisi database yang terkait dengan tim baseball. Di dalamnya, terdapat ringkasan statistik tentang bagaimana para pemain melakukan pelanggaran dan pertahanan selama beberapa tahun. Selain itu, terdapat pula informasi pribadi tentang para pemain.
+1. Data frame Batting berisi statistik ofensif semua pemain selama beberapa tahun. Lakukan preview data, misalnya, tampilkan 10 batting teratas dengan menjalankan script ini: 
+
+```{r}
+library(Lahman)
+top <- Batting %>%
+  filter(yearID == 2016) %>%
+  arrange(desc(HR)) %>%
+  slice(1:10)
+top %>% as_tibble() 
+```
+
+Script diatas hanya menampilkan ID, bukan nama pemain. Nama-nama pemain dapat dilihat pada tabel ini 
+
+```{r}
+Master %>% as_tibble() 
+```
+
+Pada tabel tersebut, bisa dilihat bahwa nama pemain dapat diidentifikasi pada kolom nameFirst dan nameLast. Gunakan fungsi left_join untuk membuat tabel baru yang berisi ID pemain, nama depan, nama belakang, dan jumlah home run (SDM). Simpan hasil left_join pada objek baru 
+
+```{r}
+objek_baru <- left_join(top, Master, by = "playerID") %>%
+  select(playerID,nameFirst,nameLast,HR) %>%
+  rename(Nama_Depan = nameFirst, Nama_Belakang =  nameLast,Home_Run =  HR)
+objek_baru
+```
+
+2. Dengan menggunakan dataset yang sama, gunakan data frame “Salaries” untuk menambahkan informasi gaji masing-masing pemain ke tabel yang telah dibuat dalam latihan no 1. Perhatikan bahwa besar gaji berbeda setiap tahunnya. Pastikan untuk memfilter gaji pada tahun 2016, lalu gunakan right_join. Tampilkan hasil yang berisi: nama depan, nama belakang, tim, SDM, dan gaji. 
+
+
+
+```{r}
+Salaries %>%
+  filter(yearID == 2016) %>%
+  right_join(objek_baru, by = "playerID") %>%
+  select(playerID,Nama_Depan,Nama_Belakang,teamID, Home_Run, salary) %>%
+  rename(Tim = teamID,Gaji = salary)
+
+```

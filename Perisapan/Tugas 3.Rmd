@@ -1,0 +1,75 @@
+---
+title: "Modul 5"
+author: "Dio Cahyo Saputra"
+date: "2/28/2020"
+output:
+  word_document: default
+  html_document: default
+---
+
+Import dataset “murders”: 
+```{r}
+library(dslabs)
+data(murders)
+```
+
+### Soal Nomor 1
+Fungsi nchar dapat digunakan untuk menghitung jumlah karakter dari suatu vektor karakter. Buatlah satu baris kode yang akan menyimpan hasil komputasi pada variabel ‘new_names’ dan berisi singkatan nama negara ketika jumlah karakternya lebih dari 8 karakter.
+
+```{r}
+namaNegara = function(negara){
+  panjang = nchar(negara)
+  if(panjang > 8){
+    negara = substr(negara,1,1)
+    print(negara)
+  }else
+    print(negara)
+}
+stt = murders$state
+new_names = sapply(stt, namaNegara)
+```
+
+### Soal Nomor 2
+Buat fungsi sum_n yang dapat digunakan untuk menghitung jumlah bilangan bulat dari 1 hingga n . Gunakan pula fungsi ini untuk menentukan jumlah bilangan bulat dari 1 hingga 5.000.
+
+```{r}
+sum_n = function(n){
+  n = 1:n
+  sum(n)
+}
+sum_n(5000)
+```
+
+### Soal Nomor 3
+Buat fungsi compute_s_n yang dapat digunakan untuk menghitung jumlah Sn = 1^2 + 2^2 + 3^2 +. . . n^2. Tampilkan hasil penjumlahan ketika n = 10.
+
+```{r}
+n = 10
+compute_s_n = function(n){
+  x = 0
+  for(i in 1:n){
+    x = x + i^2
+  }
+  x
+}
+compute_s_n(n)
+```
+
+### Soal Nomor 4
+Buat vektor numerik kosong dengan nama: s_n dengan ukuran:25 menggunakan s_n <- vector ("numeric", 25). Simpan di hasil komputasi S1, S2,. . . S25 menggunakan FOR-LOOP.
+
+```{r}
+s_n = vector("numeric",25)
+  for(n in 1:25){ 
+    s_n[n] <- compute_s_n(n) 
+  } 
+s_n
+
+```
+
+### Soal Nomor 5
+Ulangi langkah pada soal no. 4 dan gunakan fugsi sapply.
+
+```{r}
+sapply(25, compute_s_n)
+```

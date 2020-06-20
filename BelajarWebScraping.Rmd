@@ -1,0 +1,234 @@
+---
+title: "Web Scraping"
+author: "Dio Cahyo Saputra"
+date: "4/4/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+## STEP 1
+Pertama yang dilakukan adalah menginstal Packages “rvest”
+
+```{r}
+library(rvest)
+```
+
+Kemudian setelah berhasil di instal berikutnya membaca packages yang aktif menggunakan syntax:
+
+```{r}
+search()
+```
+
+melihat isi packages nomo 2 pada “rvest” menggunakan syntax:
+
+```{r}
+ls(2)
+```
+
+## STEP 2
+Pada langkah kedua yaitu memasukan data. data yang penulis pakai adalah data dari Internet Movie Database; http://www.imdb.com/search/title?count=100&release_date=2018,2018&title_type=feature"
+
+```{r}
+# Manggil data dari web
+url <- "http://www.imdb.com/search/title?count=100&release_date=2018,2018&title_type=feature"
+url
+# Membaca Web
+webpage <- read_html(url)
+webpage
+```
+
+## STEP 3
+Nah setelah data sudah berhasil dimasukan, kemudian penulis akan melihat ranking atau peringkat movie dengan menggunakan nilai pecahan.
+
+```{r}
+rank_data_html <- html_nodes(webpage,'.text-primary')
+```
+
+selanjutnya mengonverensi data peringkat menggunakan teks:
+
+```{r}
+rank_data <- html_text(rank_data_html)
+rank_data
+```
+
+Mari kita lihat peringkat movie terbaik
+
+```{r}
+head(rank_data)
+```
+
+## STEP 4
+Kali ini penulis ingin Mengetahui Rangkin Dengan Numerik dengan menggunakan syntax:
+
+```{r}
+rank_data<-as.numeric(rank_data)
+rank_data
+```
+
+Let’s have another look at the rankings
+
+```{r}
+head(rank_data)
+```
+
+STEP 5
+Using CSS selectors to scrap the title section
+
+```{r}
+title_data_html <- html_nodes(webpage,'.lister-item-header a')
+```
+
+Mengubah data judul menjadi teks
+
+```{r}
+title_data <- html_text(title_data_html)
+title_data
+```
+
+Mari kita lihat judulnya
+
+```{r}
+head(title_data)
+```
+
+## STEP 6
+Pada step ke enam penulis ingin mengatahui intisari dari film yang ada yaitu menggunakan syntax:
+
+
+```{r}
+description_data_html <- html_nodes(webpage,'.ratings-bar +  .text-muted')
+```
+
+Mengubah data uraian menjadi teks:
+
+```{r}
+description_data <- html_text(description_data_html)
+description_data <-gsub ("\n    ", "", description_data)
+```
+
+Mari kita lihat pada deskripsi data
+
+```{r}
+head(description_data)
+```
+
+## STEP 7
+Selanjutnya penulis ingin melihat durasi wakti film, menggunakan syntax:
+
+```{r}
+runtime_data_html <- html_nodes(webpage,'.text-muted .runtime')
+```
+
+Mengonversi data runtime ke teks
+
+```{r}
+runtime_data <- html_text (runtime_data_html)
+runtime_data
+```
+
+Mari kita lihat runtime
+
+```{r}
+head (runtime_data)
+```
+
+#### proses removing
+Menghapus menit dan mengubahnya menjadi numerik
+
+```{r}
+runtime_data <-gsub ("min", "", runtime_data)
+runtime_data <-as.numeric (runtime_data)
+runtime_data
+```
+
+Mari kita lihat lagi data runtime
+
+```{r}
+head (runtime_data)
+```
+
+## STEP 8
+Membuat syntax untuk melihat genre film:
+
+```{r}
+genre_data_html <- html_nodes(webpage, '.genre')
+genre_data_html
+```
+
+Mengonversi data genre ke teks
+
+```{r}
+genre_data <- html_text (genre_data_html)
+genre_data <-gsub ("\n", "", genre_data)
+head(genre_data)
+```
+
+#### proses removing
+Mengonversi setiap genre dari teks ke faktor
+genre_data <-as.(genre_data)
+```{r}
+
+```
+
+Mari kita lihat lagi data genre
+
+```{r}
+head(genre_data)
+```
+
+## STEP 9
+Melihat rating yang diperoleh film
+
+```{r}
+rating_data_html <- html_nodes (webpage, '.ratings-imdb-rating strong')
+```
+
+Mengonversi data peringkat ke teks
+
+```{r}
+rating_data <- html_text (rating_data_html)
+head(rating_data)
+```
+
+Data-Preprocessing: mengubah peringkat menjadi numerik
+
+```{r}
+rating_data <-as.numeric(rating_data)
+```
+
+Mari kita lihat lagi data peringkat
+
+```{r}
+head(rating_data)
+```
+
+## STEP 10
+Menggabungkan semua daftar untuk membentuk bingkai data:
+
+```{r}
+movies_df <- data.frame(Peringkat = rank_data, Judul = title_data, Deskripsi = description_data, Runtime = runtime_data, Genre = genre_data, Rating = rating_data,stringsAsFactors = FALSE)
+```
+
+#### Struktur kerangka data
+
+```{r}
+str (movies_df)
+library(ggplot2)
+```
+
+Bentuk qplot
+
+```{r}
+library(ggplot2)
+qplot(data = movies_df, Runtime, fill = Genre, bins = 30)
+```
+
+```{r}
+write.csv(movies_df,file = "movies_df.csv",row.names = FALSE)
+```
+

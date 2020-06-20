@@ -1,0 +1,75 @@
+---
+title: "Tugas Data Science"
+author: "Dio Cahyo Saputra"
+date: "4/9/2020"
+output:
+  word_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#### Memanggil packages yang dibutuhkan
+
+```{r}
+library(ggplot2)
+library(here)
+```
+
+### read.csv digunakan untuk memanggil file avocado.csv yang akan digunakan lalu fungsi here berisi posisi alamat directori sekarang
+
+```{r}
+avocado_df = read.csv(here("data-raw","avocado.csv"))
+```
+
+### summary untuk mengetahui nilai seperti mean median max min pada setiap variable
+
+```{r}
+summary(avocado_df)
+```
+
+#### untuk mengetahui detail dari data.frame avocado_df salah satunya tipe data pada setiap variable dan beberapa isi data pada avocado_df
+
+```{r}
+str(avocado_df)
+```
+
+### quantile untuk mengetahui nilai max min quantile 1 median quantile 3 pada 1 variable saja
+
+```{r}
+quantile(avocado_df$Total.Volume)
+```
+
+### median untuk mengetahui nilai median/nilai tengah pada 1 variable saja
+
+```{r}
+median(avocado_df$Total.Volume)
+```
+
+### min untuk mengetahui nilai minimal pada 1 variable saja
+
+```{r}
+min(avocado_df$Total.Volume)
+```
+
+### max untuk mengetahui nilai maximum pada 1 variable saja
+
+```{r}
+max(avocado_df$Total.Volume)
+```
+
+### mean untuk mengetahui nilai rata-rata pada 1 variable saja
+
+```{r}
+mean(avocado_df$Total.Volume)
+```
+
+### ggplot untuk membuat sebuah plot, disini membuat beberapa plot berdasarkan tahun
+
+```{r}
+ggplot(avocado_df, aes(x = AveragePrice, y = Total.Bags/1000000)) +
+  geom_point(aes(colour = type), alpha = 0.2) +
+  facet_wrap(~year, scales = "free")
+```

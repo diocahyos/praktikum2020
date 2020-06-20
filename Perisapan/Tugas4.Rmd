@@ -1,0 +1,82 @@
+---
+title: "Modul 6"
+author: "Dio Cahyo Saputra"
+date: "3/11/2020"
+output:
+  word_document: default
+  html_document: default
+---
+
+### Soal Nomor 1
+Gunakan paket dplyr dan dataset “US murders”.
+
+```{r}
+library(dslabs)
+library(dplyr)
+data(murders)
+```
+
+Tambahkan kolom baru dengan nama ‘rate’ menggunakan fungsi mutate pada paket dplyr seperti pada contoh kode di bawah ini
+
+```{r}
+rate <- mutate(murders, population_in_millions = population / 10^6)
+```
+
+```{r}
+murders = mutate(murders, rate = total / population * 100000)
+murders
+```
+
+### Soal Nomor 2
+rank(x) menghasilkan pemeringkatan ‘x’ dari nilai terendah ke tertinggi. Gunakan fungsi mutate untuk menambahkan kolom baru yang berisi hasil pemeringkatan dari nilai tingkat pembunuhan tertinggi ke terendah.
+
+```{r}
+murders = mutate(murders, rank = rank(rate))
+murders
+```
+
+### Soal Nomor 3
+Dengan dplyr, kita dapat menggunakan fungsi select untuk menampilkan kolom tertentu saja. Misalnya dengan contoh script ini, kita hanya akan menampilkan kolom state dan population: 
+
+```{r}
+select(murders, state, population) %>% head()
+```
+
+Gunakan select untuk menampilkan nama negara (state) dan singkatan (abb) dalam dataset “US murders”. 
+
+```{r}
+select(murders, state, abb)
+```
+### Soal Nomor 4
+Fungsi filter pada dplyr dapat digunakan untuk memilih baris tertentu dari data frame yang akan disimpan. Berbeda dengan select yang digunakan untuk memilih tampilan kolom, filter digunakan untuk memilih tampilan baris. Misalnya, kita ingin hanya menampilkan baris yang berisi dengan state = New York seperti contoh ini.
+
+```{r}
+filter(murders, state == "New York") 
+```
+
+Gunakan filter untuk menampilkan 5 negara bagian teratas dengan tingkat pembunuhan tertinggi. 
+
+```{r}
+arrange(murders, desc(rate))
+filter(murders, rate > 4.4)
+```
+### Soal Nomor 5
+Buat script yang dapat menampilkan hasil sesuai kondisi berikut: seseorang ingin tinggal di regional Northeast atau West dan ingin calon tempat tinggal yang dipilih memiliki tingkat pembunuhan kurang dari 1.  Gunakan filter untuk hanya menampilkan hasil yang terdiri dari: state, rate, dan peringkatnya.
+```{r}
+murders %>% filter(region == 'Northeast', rate < 1) %>% select(state,rate,rank)
+murders %>% filter(region == 'West', rate < 1) %>% select(state,rate,rank)
+```
+
+## Operator Pipe
+### Nomor 1
+
+Reset  dataset “US murders” ke tabel aslinya dengan melakukan update dengan perintah: data(murders). Gunakan operator pipe untuk membuat data frame baru dengan nama ‘my_states’ yang hanya berisi negara-negara di regional Northeast atau Eastwest yang memiliki tingkat pembunuhan kurang dari 1, dan hanya menampilkan kolom: state, tingkat, dan rate. Script yang dibuat seharusnya terdiri dari empat komponen yang dipisahkan oleh tiga %>%. Seperti contoh kerangka ini: 
+
+```{r}
+data("murders")
+my_states <- murders %>% 
+  mutate(rate = total / population * 100000) %>%
+  filter(region == 'Northeast' , rate < 1) %>% 
+  select(state,total,rate)
+my_states
+```

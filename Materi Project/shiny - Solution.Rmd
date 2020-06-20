@@ -31,6 +31,8 @@ library(dplyr)
 library(ggplot2)
 library(plotly)
 
+here()
+
 udara_bandung <- vroom(here("data-raw", "udara_bandung.csv"))
 option_station <- unique(udara_bandung[["station"]])
 option_parameter <- colnames(udara_bandung)[-c(1, 2)]
@@ -42,7 +44,7 @@ Berikutnya kita akan menuliskan kode antarmuka (*front-end*/*user interface*) pa
 
 ```{r ui}
 ui <- fluidPage(
-  title = "Air Quality of Kota Bandung",
+  title = "Air Quality | R Academy Telkom University",
   headerPanel("Air Quality of Kota Bandung"),
   sidebarLayout(
     sidebarPanel(
@@ -52,14 +54,15 @@ ui <- fluidPage(
                   multiple = TRUE,
                   selected = option_station[[1]]),
       selectInput(inputId = "parameter",
-                  label =  "Parameter",
-                  choices = option_parameter),
+                  label = "Parameter",
+                  choices = option_parameter,
+                  selected = "o3"),
       textInput(inputId = "parameter_label",
                 label = "Label for parameter",
                 value = ""),
-      textInput(inputId = "title_label",
-                label = "Label for title",
-                value = ""),
+      textInput(inputId = "plot_title",
+                label = "Title of plot",
+                value = "")
     ),
     mainPanel(
       plotlyOutput(outputId = "aq_plot")
@@ -78,13 +81,13 @@ server <- function(input, output, session) {
     udara_bandung %>%
       filter(station %in% input$station) %>%
       ggplot(aes_string(x = "day", y = input$parameter, colour = "station")) +
-      geom_point() +
+      geom_line() +
       scale_x_date(date_breaks = "2 weeks") +
       labs(
         x = "",
         y = ifelse(input$parameter_label == "", input$parameter, input$parameter_label),
         colour = "Station",
-        title = input$title_label
+        title = input$plot_title
       ) +
       theme_light()
   })

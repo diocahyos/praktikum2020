@@ -1,0 +1,83 @@
+---
+title: "Tugas 2"
+author: "Dio Cahyo Saputra"
+date: "2/17/2020"
+output:
+  word_document: default
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Import dataset “murders”: 
+```{r}
+library(dslabs)
+data(murders)
+```
+
+### Soal Nomor 1
+Penjelasan tentang fungsi str(), uji coba dengan object murders
+
+```{r}
+str(murders)
+```
+Fungsi str() digunakan untuk menampilkan struktur internal objek R, fungsi diagnostik, dan alternatif ringkasan. Idealnya, hanya satu baris untuk setiap struktur 'dasar' yang ditampilkan. Ini sangat cocok untuk secara kompak menampilkan isi daftar. Idenya adalah untuk memberikan output yang masuk akal untuk objek R. Itu memanggil args untuk objek fungsi.
+
+### Soal Nomor 2
+Sebutkan apa saja nama kolom yang digunakan pada data frame
+
+Kolom pada data frame antara lain state, abb, region, population, dan total data yang dapat dilihat pada fungsi str()
+
+```{r}
+str(murders)
+```
+
+### Soal Nomor 3
+Gunakan operator aksesor ($) untuk mengekstrak informasi singkatan negara dan menyimpannya pada objek “a”. Sebutkan jenis class dari objek tersebut
+
+Disini kolom singkatan negara adalah "abb" jadi menggunakan
+
+```{r}
+a = murders$abb
+a
+```
+Lalu memasukkan objek "a" pada fungsi class()
+
+```{r}
+class(a)
+```
+
+Jadi pada operator "$" itu digunakan sebagai pemisah dan untuk memanggil murders pada kolom abb "murders$abb" dan dimasukkan ke variable "a". Lalu pada fungsi class() digunakan untuk mengetahui jenis class tersebut.
+
+### Soal Nomor 4
+Gunakan tanda kurung siku untuk mengekstrak singkatan negara dan menyimpannya pada objek “b”. Tentukan apakah variabel “a” dan “b” bernilai sama?
+
+```{r}
+b<-murders[,2]
+all(a==b)
+```
+
+Murders diekstrak menggunakan murders[,2] maksudnya didalam memilih semua baris di kolom 2 yaitu singkatan negara atau abb, kemudian fungsi all(a==b) artinya nilai yang berada di variable a dibangingkan dengan b dan hasilnya sama.
+
+### Soal Nomor 5
+Variabel region memiliki tipe data: factor. Dengan satu baris kode, gunakan fungsi level dan length untuk menentukan jumlah region yang dimiliki dataset.
+
+```{r}
+x = levels(murders$region)
+x
+length(x)
+```
+
+Fungsi levels() menyediakan akses ke atribut level variabel. Bentuk pertama mengembalikan nilai level argumennya dan yang kedua menetapkan atribut. Lalu fungsi length() digunakan untuk mendapatkan jumlah data.
+
+### Soal Nomor 6
+Fungsi table dapat digunakan untuk ekstraksi data pada tipe vektor dan menampilkan frekuensi dari setiap elemen. Dengan menerapkan fungsi tersebut, dapat diketahui jumlah state pada tiap region. Gunakan fungsi table dalam satu baris kode untuk menampilkan tabel baru yang berisi jumlah state pada tiap region
+
+```{r}
+table(murders$region)
+```
+
+Fungsi tabel() menggunakan lintas-faktor mengklasifikasikan untuk membangun tabel kontingensi dari jumlah pada setiap kombinasi dari tingkat faktor.
